@@ -770,7 +770,7 @@ function productFromSheet(row, localByName, columns) {
 const price = sheetPrice || local?.price || "";
   return withDefaultPhoto({
     id: local?.id || slugify(name),
-    name: local?.name || name,
+    name: name,
     category: sheetCategory || local?.category || "Otros",
     defaultUnit,
     allowedUnits,
