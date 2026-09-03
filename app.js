@@ -151,7 +151,7 @@ function quantityRules(input, unit) {
   const normalizedUnit = String(unit || "").toUpperCase();
   const rules = {
     PZ: { min: "1", step: "1" },
-    G: { min: "1", step: "50" },
+    G: { min: "1", step: "1" },
     KG: { min: "0.1", step: "0.1" },
   }[normalizedUnit] || { min: "0.1", step: "0.1" };
   input.min = rules.min;
