@@ -570,15 +570,6 @@ function openDeliveryDetails() {
     }
   });
 }
-  }
-
-  elements.cartDialog.close();
-
-  if (!elements.detailsDialog.open) {
-    elements.detailsDialog.showModal();
-  }
-}
-
 function returnToCart() {
   if (elements.detailsDialog.open) {
     elements.detailsDialog.close();
