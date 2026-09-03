@@ -399,9 +399,12 @@ function makePriceDisplay(product) {
 
 function displayPrice(value) {
   const text = String(value || "").trim();
+
   if (!text || text.startsWith("$")) return text;
+
   if (/^\d+(?:[.,]\d+)?$/.test(text)) {
     const amount = Number(text.replace(",", "."));
+
     return new Intl.NumberFormat("es-MX", {
       style: "currency",
       currency: "MXN",
@@ -409,6 +412,10 @@ function displayPrice(value) {
       maximumFractionDigits: 2,
     }).format(amount);
   }
+
+  return text;
+}
+
 function convertedPriceByUnit(value, unit) {
   const text = String(value || "").trim();
 
@@ -445,9 +452,6 @@ function convertedPriceByUnit(value, unit) {
     maximumFractionDigits: 2,
   }).format(convertedPrice);
 }
-  return text;
-}
-
 function renderProducts() {
   const query = normalize(state.query);
   const visible = products.filter((product) => {
