@@ -160,7 +160,7 @@ function quantityRules(input, unit) {
 function allowedUnitsFromSheet(value, fallback = ["PZ", "G", "KG"]) {
   const text = normalize(value);
   if (!text) return [...fallback];
-  if (["ambos", "todo", "todos", "mixto", "pz g kg", "pieza y peso"].includes(text)) return ["PZ", "G", "KG"];
+  if (["ambos", "ambas", "todo", "todos", "mixto", "pz g kg", "pieza y peso"].includes(text)) return ["PZ", "G", "KG"];
   if (["pz", "pieza", "piezas", "solo pz", "solo pieza", "pieza completa"].includes(text)) return ["PZ"];
   if (["peso", "kg", "kilo", "kilos", "kilogramo", "kilogramos"].includes(text)) return ["G", "KG"];
 
@@ -652,7 +652,7 @@ function sheetColumnMap(headerRow) {
     name: find(["nombre de producto", "producto", "nombre"], 0),
     price: find(["precio de venta"], 7),
     photo: find(["url de foto", "url foto", "foto de producto"], 8),
-    saleUnit: find(["forma de venta", "unidad de venta", "venta por", "tipo de venta"]),
+    saleUnit: 9,
     category: find(["categoria"]),
     active: find(["activo", "visible", "estatus"]),
   };
