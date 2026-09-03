@@ -596,6 +596,18 @@ function requestConfirmation(event) {
   elements.detailsDialog.close();
   renderFinalOrder();
   elements.confirmationDialog.showModal();
+  requestAnimationFrame(() => {
+  const modalBody = elements.confirmationDialog.querySelector(".modal-body");
+  const confirmationTitle = document.querySelector("#confirmationTitle");
+
+  if (modalBody) {
+    modalBody.scrollTop = 0;
+  }
+
+  if (confirmationTitle) {
+    confirmationTitle.focus({ preventScroll: true });
+  }
+});
 }
 
 function orderMessage() {
