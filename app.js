@@ -658,7 +658,7 @@ function orderMessage() {
     "",
     `PAGO: ${upper(elements.paymentMethod.value)}`,
     "",
-    "ENTREGA: SÁBADO, A MÁS TARDAR 11:30 A. M.",
+    "ENTREGA: SÁBADO, A MÁS TARDAR 01:00 A. M.",
     "",
     "LISTA DE PRODUCTOS:",
     ...lines,
@@ -736,8 +736,8 @@ function sheetColumnMap(headerRow) {
     photo: find(["url de foto", "url foto", "foto de producto"], 8),
     saleUnit: 9,
     priceDisplayUnit: 12,
-    category: find(["categoria"]),
-    active: find(["activo", "visible", "estatus"]),
+    category: 10,
+    active: 11,
   };
 }
 
