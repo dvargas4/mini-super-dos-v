@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Catálogo en línea de Mini Súper Dos V con entrega a domicilio los sábados." />
+    <meta name="theme-color" content="#d90018" />
+    <title>Mini Súper Dos V | Catálogo a domicilio</title>
+    <link rel="icon" href="assets/logo.jpg" type="image/jpeg" />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="catalog.js" defer></script>
+    <script src="photos.js" defer></script>
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="header-inner">
+        <a class="brand" href="#catalogo" aria-label="Ir al catálogo">
+          <img src="assets/logo.jpg" alt="Mini Súper Dos V" />
+          <span>
+            <strong>Mini Súper Dos V</strong>
+            <small>A sus órdenes</small>
+          </span>
+        </a>
+        <button class="cart-button" id="openCart" type="button" aria-label="Abrir carrito">
+          <span aria-hidden="true">🛒</span>
+          <span class="cart-label">Mi pedido</span>
+          <b id="cartCount">0</b>
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero-wrap">
+        <div class="hero">
+          <div class="hero-copy">
+            <p>Tu minisúper de confianza</p>
+            <h1>Todo lo que necesitas, directo a tu puerta.</h1>
+            <div class="hero-facts">
+              <span><b>Sábado</b> día de entrega</span>
+              <span>Hasta las <b>11:30 a. m.</b></span>
+              <span>Pide por <b>kilo, gramos o pieza</b></span>
+            </div>
+            <p class="hero-store-note"><strong>También puedes hacer tu pedido directamente en Mini Súper Dos V.</strong> Añade cualquier otro producto disponible en la tienda, aunque no aparezca en este catálogo.</p>
+            <a class="hero-button" href="#catalogo">Ver catálogo <span aria-hidden="true">↓</span></a>
+          </div>
+          <div class="hero-image">
+            <img src="assets/logo.jpg" alt="Logotipo de Mini Súper Dos V con carrito" />
+          </div>
+        </div>
+      </section>
+
+      <section class="catalog" id="catalogo">
+        <div class="catalog-heading">
+          <div>
+            <p class="eyebrow">Más de 200 productos</p>
+            <h2>Arma tu pedido</h2>
+            <p class="caption">Precios semanales por kilo. Pide en kilos, gramos o piezas y agrega indicaciones especiales.</p>
+            <p class="catalog-status" id="catalogStatus" data-status="loading" aria-live="polite">Actualizando precios semanales…</p>
+          </div>
+          <label class="search">
+            <span aria-hidden="true">⌕</span>
+            <input id="searchInput" type="search" placeholder="Buscar jitomate, queso, chile…" autocomplete="off" />
+          </label>
+        </div>
+
+        <div class="catalog-actions">
+          <div class="categories" id="categories" aria-label="Categorías de productos"></div>
+          <button class="special-button" id="openCustom" type="button"><span aria-hidden="true">＋</span> Agregar algo que no está en la lista</button>
+        </div>
+
+        <div class="product-grid" id="productGrid"></div>
+        <div class="empty-state" id="emptyState" hidden>
+          <strong>No encontramos ese producto</strong>
+          <span>Puedes solicitarlo como un producto fuera de catálogo.</span>
+          <button class="special-button" id="emptyCustom" type="button">Agregar producto especial</button>
+        </div>
+      </section>
+
+      <section class="store-info">
+        <div class="info-grid">
+          <article><span aria-hidden="true">⌖</span><div><h3>Zona de entrega</h3><p id="deliveryZone"></p></div></article>
+          <article><span aria-hidden="true">◷</span><div><h3>Entrega sabatina</h3><p>Tu pedido se entrega el sábado, a más tardar a las 11:30 a. m.</p></div></article>
+          <article><span aria-hidden="true">✓</span><div><h3>Pedido confirmado</h3><p>Después de armarlo deberás enviarlo y confirmarlo directamente vía WhatsApp.</p></div></article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div>
+        <img src="assets/logo.jpg" alt="" />
+        <p>Precios y existencias sujetos a confirmación. El pedido se considera recibido únicamente después de confirmarlo vía WhatsApp.</p>
+      </div>
+    </footer>
+
+    <button class="mobile-summary" id="mobileSummary" type="button" hidden>
+      <span>🛒 Ver pedido</span>
+      <strong id="mobileCount">0 productos</strong>
+    </button>
+
+    <dialog class="side-dialog" id="cartDialog">
+      <div class="side-panel">
+        <header class="panel-header">
+          <div><p>Mini Súper Dos V</p><h2>Tu pedido</h2></div>
+          <button class="icon-button" id="closeCart" type="button" aria-label="Cerrar carrito">×</button>
+        </header>
+
+        <div class="panel-body">
+          <div class="cart-empty" id="cartEmpty">
+            <span aria-hidden="true">🛒</span>
+            <strong>Tu carrito está vacío</strong>
+            <p>Agrega productos para comenzar.</p>
+          </div>
+
+          <div id="cartContent" hidden>
+            <div class="cart-items" id="cartItems"></div>
+            <button class="add-another" id="cartCustom" type="button">＋ Agregar algo que no está en la lista</button>
+
+            <form class="customer-form" id="customerForm">
+              <h3>Datos para la entrega</h3>
+              <label>Nombre completo <input id="customerName" name="name" type="text" autocomplete="name" required placeholder="María López Hernández" /></label>
+              <label>Calle, número e interior <input id="streetAddress" name="street-address" type="text" autocomplete="street-address" required placeholder="Calle Ejemplo 123, depto. 4" /></label>
+              <div class="field-pair">
+                <label>Colonia <input id="neighborhood" type="text" required placeholder="Centro" /></label>
+                <label>Código postal <input id="postalCode" type="text" inputmode="numeric" required placeholder="00000" pattern="[0-9]{5}" /></label>
+              </div>
+              <label>Alcaldía o municipio <input id="municipality" type="text" required placeholder="Tlalpan" /></label>
+              <label>Referencia para encontrar el domicilio <textarea id="addressReference" rows="2" required placeholder="Portón gris, tocar el timbre"></textarea></label>
+              <label>Forma de pago <select id="paymentMethod" required><option value="">Selecciona una opción</option></select></label>
+            </form>
+
+            <div class="delivery-notice"><strong>Entrega: sábado</strong><span>A más tardar a las 11:30 a. m.</span></div>
+            <div class="confirmation-warning"><strong>IMPORTANTE</strong><span>TENDRÁ QUE CONFIRMAR SU PEDIDO VÍA WHATSAPP</span></div>
+          </div>
+        </div>
+
+        <footer class="panel-footer">
+          <div><span>Productos agregados</span><strong id="cartProductCount">0</strong></div>
+          <div class="estimated-total"><span id="cartPriceLabel">Total del pedido</span><strong id="cartEstimatedTotal">Por confirmar</strong></div>
+          <p class="price-note" id="cartPriceNote">La tienda confirma disponibilidad, peso real por pieza y total final vía WhatsApp.</p>
+          <button class="send-button" id="sendOrder" type="submit" form="customerForm" disabled>Enviar pedido <span aria-hidden="true">›</span></button>
+          <small>El envío a WhatsApp no confirma automáticamente el pedido.</small>
+        </footer>
+      </div>
+    </dialog>
+
+    <dialog class="modal-dialog product-dialog" id="productDialog" aria-labelledby="productDialogName">
+      <form class="modal-card" id="productForm">
+        <header>
+          <div><p id="productDialogEyebrow">Agregar al carrito</p><h2 id="productDialogName">Producto</h2></div>
+          <button class="icon-button" id="closeProduct" type="button" aria-label="Cerrar">×</button>
+        </header>
+        <div class="modal-body">
+          <p class="product-dialog-help" id="productDialogHelp">Elige la cantidad, la unidad y cualquier indicación antes de agregarlo.</p>
+          <div class="field-pair">
+            <label>Cantidad <input id="productQuantity" type="number" min="0.1" step="0.1" required value="1" /></label>
+            <label>Unidad <select id="productUnit" required><option value="PZ">PZ</option><option value="G">G</option><option value="KG">KG</option></select></label>
+          </div>
+          <label>Nota del producto <textarea id="productNote" rows="2" placeholder="Ej. maduro, piezas grandes o colores específicos"></textarea></label>
+        </div>
+        <footer><button class="secondary-button" id="cancelProduct" type="button">Cancelar</button><button class="primary-button" id="saveProduct" type="submit">Agregar al carrito</button></footer>
+      </form>
+    </dialog>
+
+    <dialog class="modal-dialog" id="customDialog">
+      <form class="modal-card" id="customForm">
+        <header>
+          <div><p>Solicitud especial</p><h2>Agregar otro producto</h2></div>
+          <button class="icon-button" id="closeCustom" type="button" aria-label="Cerrar">×</button>
+        </header>
+        <div class="modal-body">
+          <label>¿Qué necesitas? <input id="customName" type="text" required placeholder="Ej. tortillas, leche o jabón" /></label>
+          <div class="field-pair">
+            <label>Cantidad <input id="customQuantity" type="number" min="1" step="1" required value="1" /></label>
+            <label>Unidad <select id="customUnit" required><option value="PZ">PZ</option><option value="G">G</option><option value="KG">KG</option></select></label>
+          </div>
+          <label>Indicaciones <textarea id="customNote" rows="3" placeholder="Marca, presentación, tamaño o cualquier detalle"></textarea></label>
+        </div>
+        <footer><button class="secondary-button" id="cancelCustom" type="button">Cancelar</button><button class="primary-button" type="submit">Agregar al carrito</button></footer>
+      </form>
+    </dialog>
+
+    <dialog class="modal-dialog confirmation-dialog" id="confirmationDialog">
+      <div class="modal-card confirmation-card">
+        <header><div><p>Último paso</p><h2>Confirma por WhatsApp</h2></div></header>
+        <div class="modal-body">
+          <div class="confirmation-intro">
+            <div class="whatsapp-icon" aria-hidden="true">✓</div>
+            <div><strong>TENDRÁ QUE CONFIRMAR SU PEDIDO VÍA WHATSAPP</strong><p>Revisa tu lista final. Todavía puedes modificar cantidades, unidades, notas o eliminar productos.</p></div>
+          </div>
+          <section class="final-order-section">
+            <div class="final-order-heading"><h3>Lista final del pedido</h3><span id="finalOrderCount">0 productos</span></div>
+            <div class="final-order-items" id="finalOrderItems"></div>
+            <div class="final-add-actions">
+              <button class="secondary-button" id="finalAddProduct" type="button">＋ Agregar desde el catálogo</button>
+              <button class="secondary-button" id="finalAddCustom" type="button">＋ Agregar algo fuera de la lista</button>
+            </div>
+          </section>
+          <p class="confirmation-footnote">Al continuar se abrirá un mensaje con tu nombre, dirección, forma de pago y todos los productos. Deberás enviarlo y esperar la confirmación de Mini Súper Dos V.</p>
+        </div>
+        <footer><button class="secondary-button" id="cancelConfirmation" type="button">Volver al pedido</button><button class="primary-button" id="openWhatsApp" type="button">Abrir WhatsApp</button></footer>
+      </div>
+    </dialog>
+  </body>
+</html>
