@@ -13,7 +13,7 @@ window.STORE_CONFIG = {
   sheetRefreshMinutes: 5,
   freeDeliveryKg: 5,
   deliveryDay: "sábado",
-  deliveryLimit: "11:30 a. m.",
+  deliveryLimit: "01:00 a. m.",
   orderCutoff: "viernes",
   deliveryZone: "Alrededores de Calzada México-Xochimilco 62, San Lorenzo Huipulco, Tlalpan, Ciudad de México.",
   paymentOptions: ["Transferencia", "Tarjeta", "Efectivo"],
