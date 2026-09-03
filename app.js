@@ -409,6 +409,42 @@ function displayPrice(value) {
       maximumFractionDigits: 2,
     }).format(amount);
   }
+function convertedPriceByUnit(value, unit) {
+  const text = String(value || "").trim();
+
+  if (!text) return "";
+
+  const numericPrice = Number(
+    text
+      .replace(/\$/g, "")
+      .replace(/\s/g, "")
+      .replace(",", ".")
+  );
+
+  if (!Number.isFinite(numericPrice)) {
+    return displayPrice(value);
+  }
+
+  const normalizedUnit = normalize(unit).replace(/\s+/g, "");
+
+  const conversionFactors = {
+    "100g": 0.1,
+    "250g": 0.25,
+    "500g": 0.5,
+    "kg": 1,
+    "1kg": 1,
+  };
+
+  const factor = conversionFactors[normalizedUnit] ?? 1;
+  const convertedPrice = numericPrice * factor;
+
+  return new Intl.NumberFormat("es-MX", {
+    style: "currency",
+    currency: "MXN",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(convertedPrice);
+}
   return text;
 }
 
@@ -712,8 +748,7 @@ function productFromSheet(row, localByName, columns) {
   if (["no", "false", "0", "inactivo"].includes(active)) return null;
   const normalizedName = normalize(name);
   const local = localByName.get(normalizedName) || localByName.get(sheetNameAliases[normalizedName]);
-  const sheetPrice = displayPrice(sheetCell(row, columns.price));
-  const price = sheetPrice || local?.price || "";
+  const rawSheetPrice = sheetCell(row, columns.price);
   const sheetPhoto = validHttpsUrl(sheetCell(row, columns.photo));
   const sheetCategory = String(sheetCell(row, columns.category) || "").trim();
   const allowedUnits = allowedUnitsFromSheet(
@@ -727,6 +762,12 @@ function productFromSheet(row, localByName, columns) {
   const priceDisplayUnit = String(
     sheetCell(row, columns.priceDisplayUnit) || ""
   ).trim().toLowerCase();
+  const sheetPrice = convertedPriceByUnit(
+  rawSheetPrice,
+  priceDisplayUnit || "kg"
+);
+
+const price = sheetPrice || local?.price || "";
   return withDefaultPhoto({
     id: local?.id || slugify(name),
     name: local?.name || name,
