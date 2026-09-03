@@ -21,7 +21,7 @@ window.STORE_CONFIG = {
 
 const CATALOG = {
   "Frutas": [
-    "Plátano", "Papaya", "Aguacate", "Mango", "Uva", "Manzana verde", "Limón", "Fresas", "Kiwi",
+    "Plátano", "Papaya", "Aguacate", "Mango", "Uva", "Manzana verde", "Limón", "Domo de Fresas", "Kiwi",
     "Manzana amarilla", "Guayaba", "Manzana roja", "Zarzamora", "Dátil", "Pera Red Anjou", "Tuna",
     "Melón", "Melón grande", "Naranja", "Arándano", "Pera mantequilla", "Sandía", "Plátano macho",
     "Toronja", "Mamey", "Durazno", "Manzana Gala", "Xoconostle", "Plátano dominico", "Frambuesa",
