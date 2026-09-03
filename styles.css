@@ -474,3 +474,50 @@ textarea {
     padding: 0 8px;
   }
 }
+/* ALINEAR CANTIDAD Y UNIDAD EN LA LISTA FINAL */
+
+.final-order-items .line-pair {
+  display: grid;
+  align-items: end;
+  grid-template-columns: minmax(0, 1fr) 120px;
+  gap: 10px;
+}
+
+.final-order-items .line-field {
+  min-width: 0;
+}
+
+.final-order-items .line-field input,
+.final-order-items .line-field select {
+  display: block;
+  width: 100%;
+  height: 42px;
+  margin: 0;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  font-size: 16px;
+  line-height: 1;
+}
+
+.final-order-items .line-field select {
+  padding-right: 28px;
+}
+
+@media (max-width: 420px) {
+  .final-order-items .line-pair {
+    grid-template-columns: minmax(0, 1fr) 90px;
+    gap: 7px;
+  }
+
+  .final-order-items .line-field input,
+  .final-order-items .line-field select {
+    height: 40px;
+    padding-left: 9px;
+    padding-right: 9px;
+  }
+
+  .final-order-items .line-field select {
+    padding-right: 24px;
+  }
+}
