@@ -253,3 +253,106 @@ dialog::backdrop { background: rgb(4 17 42 / 0.62); backdrop-filter: blur(3px); 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }
+/* CORRECCIÓN PARA TELÉFONOS */
+
+.weekly-price {
+  min-width: 0;
+}
+
+.weekly-price-value {
+  min-width: 0;
+  white-space: nowrap;
+}
+
+.confirmation-dialog {
+  max-height: 100dvh;
+  overflow: hidden;
+}
+
+.confirmation-card {
+  display: flex;
+  width: 100%;
+  height: min(90vh, 860px);
+  height: min(90dvh, 860px);
+  max-height: calc(100dvh - 20px);
+  flex-direction: column;
+}
+
+.confirmation-card > header,
+.confirmation-card > footer {
+  flex: 0 0 auto;
+}
+
+.confirmation-card .modal-body {
+  display: block;
+  min-height: 0;
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 720px) {
+  .price-stage {
+    padding: 10px;
+  }
+
+  .weekly-price {
+    display: grid;
+    align-items: end;
+    gap: 3px;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .weekly-price-value {
+    font-size: clamp(23px, 7.2vw, 31px);
+    letter-spacing: -0.06em;
+  }
+
+  .weekly-price-unit {
+    margin: 0;
+    font-size: 10px;
+    line-height: 1;
+  }
+
+  .price-stage small {
+    line-height: 1.35;
+  }
+
+  .confirmation-dialog {
+    width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    max-height: none;
+    margin: 0;
+  }
+
+  .confirmation-card {
+    height: 100vh;
+    height: 100dvh;
+    max-height: none;
+    border-radius: 0;
+  }
+
+  .confirmation-card > header {
+    padding: 17px 18px;
+  }
+
+  .confirmation-card .modal-body {
+    padding: 18px 16px;
+  }
+
+  .confirmation-card > footer {
+    gap: 8px;
+    padding: 12px 14px calc(12px + env(safe-area-inset-bottom));
+  }
+
+  .confirmation-card > footer .primary-button,
+  .confirmation-card > footer .secondary-button {
+    min-width: 0;
+    flex: 1 1 0;
+    padding: 0 10px;
+    font-size: 11px;
+    white-space: nowrap;
+  }
+}
