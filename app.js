@@ -666,7 +666,7 @@ function loadSheetData(queryUrl) {
   return new Promise((resolve, reject) => {
     const callbackName = `dosvSheet${Date.now()}${Math.random().toString(16).slice(2)}`;
     const script = document.createElement("script");
-    const timeout = window.setTimeout(() => finish(new Error("La hoja tardó demasiado en responder")), 15000);
+    const timeout = window.setTimeout(() => finish(new Error("La hoja tardó demasiado en responder")), 30000);
     function finish(error, value) {
       window.clearTimeout(timeout);
       script.remove();
