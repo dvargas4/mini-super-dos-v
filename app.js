@@ -695,6 +695,7 @@ function sheetColumnMap(headerRow) {
     price: find(["precio de venta"], 7),
     photo: find(["url de foto", "url foto", "foto de producto"], 8),
     saleUnit: 9,
+    priceDisplayUnit: 12,
     category: find(["categoria"]),
     active: find(["activo", "visible", "estatus"]),
   };
@@ -719,8 +720,13 @@ function productFromSheet(row, localByName, columns) {
     sheetCell(row, columns.saleUnit),
     local?.allowedUnits || ["PZ", "G", "KG"],
   );
-  const defaultUnit = allowedUnits.includes(local?.defaultUnit) ? local.defaultUnit : allowedUnits[0];
-  const pieceOnly = allowedUnits.length === 1 && allowedUnits[0] === "PZ";
+  const defaultUnit = allowedUnits.includes(local?.defaultUnit)
+    ? local.defaultUnit
+    : allowedUnits[0];
+
+  const priceDisplayUnit = String(
+    sheetCell(row, columns.priceDisplayUnit) || ""
+  ).trim().toLowerCase();
   return withDefaultPhoto({
     id: local?.id || slugify(name),
     name: local?.name || name,
@@ -728,7 +734,7 @@ function productFromSheet(row, localByName, columns) {
     defaultUnit,
     allowedUnits,
     price,
-    priceUnit: pieceOnly && price ? "pz" : (sheetPrice ? "kg" : local?.priceUnit || ""),
+    priceUnit: priceDisplayUnit || (sheetPrice ? "kg" : local?.priceUnit || ""),
     photoUrl: sheetPhoto,
     photoCredit: sheetPhoto ? "Imagen proporcionada por la tienda" : "",
     photoSource: "",
