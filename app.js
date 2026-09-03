@@ -559,6 +559,24 @@ function openDeliveryDetails() {
   if (!elements.detailsDialog.open) {
     elements.detailsDialog.showModal();
   }
+
+  requestAnimationFrame(() => {
+    elements.detailsDialog.scrollTop = 0;
+
+    const modalBody = elements.detailsDialog.querySelector(".modal-body");
+
+    if (modalBody) {
+      modalBody.scrollTop = 0;
+    }
+  });
+}
+  }
+
+  elements.cartDialog.close();
+
+  if (!elements.detailsDialog.open) {
+    elements.detailsDialog.showModal();
+  }
 }
 
 function returnToCart() {
