@@ -157,6 +157,37 @@ function quantityRules(input, unit) {
   input.min = rules.min;
   input.step = rules.step;
 }
+function unitName(value, quantity = null) {
+  const unit = String(value || "").trim().toUpperCase();
+  const singular = quantity !== null && Number(quantity) === 1;
+
+  const names = {
+    PZ: singular ? "pieza" : "piezas",
+    G: singular ? "gramo" : "gramos",
+    KG: singular ? "kilogramo" : "kilogramos",
+  };
+
+  return names[unit] || String(value || "").trim().toLowerCase();
+}
+
+function priceUnitName(value) {
+  const unit = normalize(value).replace(/\s+/g, "");
+
+  const names = {
+    "100g": "100 gramos",
+    "250g": "250 gramos",
+    "500g": "500 gramos",
+    "g": "gramo",
+    "kg": "kilogramo",
+    "1kg": "kilogramo",
+    "pz": "pieza",
+    "pieza": "pieza",
+    "caja": "caja",
+    "paquete": "paquete",
+  };
+
+  return names[unit] || String(value || "").trim().toLowerCase();
+}
 
 function allowedUnitsFromSheet(value, fallback = ["PZ", "G", "KG"]) {
   const text = normalize(value);
@@ -174,12 +205,17 @@ function allowedUnitsFromSheet(value, fallback = ["PZ", "G", "KG"]) {
 
 function fillUnitSelect(select, allowedUnits) {
   const units = allowedUnits?.length ? allowedUnits : ["PZ", "G", "KG"];
+
   select.replaceChildren(...units.map((value) => {
     const option = document.createElement("option");
     option.value = value;
-    option.textContent = value;
+
+    const label = unitName(value);
+    option.textContent = label.charAt(0).toUpperCase() + label.slice(1);
+
     return option;
   }));
+
   select.disabled = units.length === 1;
 }
 
@@ -355,7 +391,7 @@ function makeProductCard(product) {
   if (selected) {
     const selectedPanel = createNode("div", "selected-product");
     const selectedTop = createNode("div", "selected-product-top");
-    selectedTop.append(createNode("span", "added-status", "✓ En el carrito"), createNode("strong", "selected-product-quantity", `${selected.quantity} ${selected.unit}`));
+    selectedTop.append(createNode("span", "added-status", "✓ En el carrito"), createNode("strong", "selected-product-quantity", `${selected.quantity} ${unitName(selected.unit, selected.quantity)}`));
     const summary = createNode("p", "selected-product-note", selected.note || "Sin indicaciones especiales");
     const actions = createNode("div", "selected-product-actions");
     const edit = createNode("button", "edit-button", "Editar");
@@ -763,12 +799,15 @@ function productFromSheet(row, localByName, columns) {
     ? local.defaultUnit
     : allowedUnits[0];
 
-  const priceDisplayUnit = String(
+  const rawPriceDisplayUnit = String(
     sheetCell(row, columns.priceDisplayUnit) || ""
-  ).trim().toLowerCase();
+  ).trim();
+
+  const priceDisplayUnit = priceUnitName(rawPriceDisplayUnit);
+
   const sheetPrice = convertedPriceByUnit(
-  rawSheetPrice,
-  priceDisplayUnit || "kg"
+    rawSheetPrice,
+    rawPriceDisplayUnit || "kg"
 );
 
 const price = sheetPrice || local?.price || "";
@@ -779,7 +818,11 @@ const price = sheetPrice || local?.price || "";
     defaultUnit,
     allowedUnits,
     price,
-    priceUnit: priceDisplayUnit || (sheetPrice ? "kg" : local?.priceUnit || ""),
+    priceUnit: priceDisplayUnit || (
+  sheetPrice
+    ? "kilogramo"
+    : priceUnitName(local?.priceUnit || "")
+),
     photoUrl: sheetPhoto,
     photoCredit: sheetPhoto ? "Imagen proporcionada por la tienda" : "",
     photoSource: "",
