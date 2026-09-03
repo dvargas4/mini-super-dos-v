@@ -115,22 +115,6 @@
           <div id="cartContent" hidden>
             <div class="cart-items" id="cartItems"></div>
             <button class="add-another" id="cartCustom" type="button">＋ Agregar algo que no está en la lista</button>
-
-            <form class="customer-form" id="customerForm">
-              <h3>Datos para la entrega</h3>
-              <label>Nombre completo <input id="customerName" name="name" type="text" autocomplete="name" required placeholder="María López Hernández" /></label>
-              <label>Calle, número e interior <input id="streetAddress" name="street-address" type="text" autocomplete="street-address" required placeholder="Calle Ejemplo 123, depto. 4" /></label>
-              <div class="field-pair">
-                <label>Colonia <input id="neighborhood" type="text" required placeholder="Centro" /></label>
-                <label>Código postal <input id="postalCode" type="text" inputmode="numeric" required placeholder="00000" pattern="[0-9]{5}" /></label>
-              </div>
-              <label>Alcaldía o municipio <input id="municipality" type="text" required placeholder="Tlalpan" /></label>
-              <label>Referencia para encontrar el domicilio <textarea id="addressReference" rows="2" required placeholder="Portón gris, tocar el timbre"></textarea></label>
-              <label>Forma de pago <select id="paymentMethod" required><option value="">Selecciona una opción</option></select></label>
-            </form>
-
-            <div class="delivery-notice"><strong>Entrega: sábado</strong><span>A más tardar a las 11:30 a. m.</span></div>
-            <div class="confirmation-warning"><strong>IMPORTANTE</strong><span>TENDRÁ QUE CONFIRMAR SU PEDIDO VÍA WHATSAPP</span></div>
           </div>
         </div>
 
@@ -138,7 +122,9 @@
           <div><span>Productos agregados</span><strong id="cartProductCount">0</strong></div>
           <div class="estimated-total"><span id="cartPriceLabel">Total del pedido</span><strong id="cartEstimatedTotal">Por confirmar</strong></div>
           <p class="price-note" id="cartPriceNote">La tienda confirma disponibilidad, peso real por pieza y total final vía WhatsApp.</p>
-          <button class="send-button" id="sendOrder" type="submit" form="customerForm" disabled>Enviar pedido <span aria-hidden="true">›</span></button>
+          <button class="send-button" id="sendOrder" type="button" disabled>
+  Enviar pedido <span aria-hidden="true">›</span>
+</button>
           <small>El envío a WhatsApp no confirma automáticamente el pedido.</small>
         </footer>
       </div>
@@ -162,6 +148,107 @@
       </form>
     </dialog>
 
+    <dialog class="modal-dialog details-dialog" id="detailsDialog" aria-labelledby="detailsTitle">
+  <form class="modal-card details-card" id="customerForm">
+    <header>
+      <div>
+        <p>Paso 2 de 3</p>
+        <h2 id="detailsTitle">Datos para la entrega</h2>
+      </div>
+
+      <button class="icon-button" id="closeDetails" type="button" aria-label="Cerrar">
+        ×
+      </button>
+    </header>
+
+    <div class="modal-body">
+      <label>
+        Nombre completo
+        <input
+          id="customerName"
+          name="name"
+          type="text"
+          autocomplete="name"
+          required
+          placeholder="María López Hernández"
+        />
+      </label>
+
+      <label>
+        Calle, número e interior
+        <input
+          id="streetAddress"
+          name="street-address"
+          type="text"
+          autocomplete="street-address"
+          required
+          placeholder="Calle Ejemplo 123, depto. 4"
+        />
+      </label>
+
+      <div class="field-pair">
+        <label>
+          Colonia
+          <input id="neighborhood" type="text" required placeholder="Centro" />
+        </label>
+
+        <label>
+          Código postal
+          <input
+            id="postalCode"
+            type="text"
+            inputmode="numeric"
+            required
+            placeholder="00000"
+            pattern="[0-9]{5}"
+          />
+        </label>
+      </div>
+
+      <label>
+        Alcaldía o municipio
+        <input id="municipality" type="text" required placeholder="Tlalpan" />
+      </label>
+
+      <label>
+        Referencia para encontrar el domicilio
+        <textarea
+          id="addressReference"
+          rows="2"
+          required
+          placeholder="Portón gris, tocar el timbre"
+        ></textarea>
+      </label>
+
+      <label>
+        Forma de pago
+        <select id="paymentMethod" required>
+          <option value="">Selecciona una opción</option>
+        </select>
+      </label>
+
+      <div class="delivery-notice">
+        <strong>Entrega: sábado</strong>
+        <span>A más tardar a las 11:30 a. m.</span>
+      </div>
+
+      <div class="confirmation-warning">
+        <strong>IMPORTANTE</strong>
+        <span>TENDRÁ QUE CONFIRMAR SU PEDIDO VÍA WHATSAPP</span>
+      </div>
+    </div>
+
+    <footer>
+      <button class="secondary-button" id="backToCart" type="button">
+        Volver al carrito
+      </button>
+
+      <button class="primary-button" type="submit">
+        Revisar pedido
+      </button>
+    </footer>
+  </form>
+</dialog>
     <dialog class="modal-dialog" id="customDialog">
       <form class="modal-card" id="customForm">
         <header>
