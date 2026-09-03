@@ -521,3 +521,22 @@ textarea {
     padding-right: 24px;
   }
 }
+/* ABRIR DATOS DE ENTREGA DESDE ARRIBA Y SIN ZOOM */
+
+.details-dialog[open] {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+}
+
+@media (max-width: 720px) {
+  .details-dialog[open] {
+    margin: 0;
+  }
+
+  .details-card input,
+  .details-card select,
+  .details-card textarea {
+    font-size: 16px !important;
+  }
+}
