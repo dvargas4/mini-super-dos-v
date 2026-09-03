@@ -202,7 +202,7 @@ function openCatalogProduct(product) {
   elements.saveProduct.textContent = selected ? "Guardar cambios" : "Agregar al carrito";
   quantityRules(elements.productQuantity, elements.productUnit.value);
   elements.productDialog.showModal();
-  setTimeout(() => elements.productQuantity.focus(), 0);
+  setTimeout(() => elements.customName.focus(), 0);
 }
 
 function closeCatalogProduct() {
