@@ -57,6 +57,7 @@ const elements = Object.fromEntries([
   "municipality", "addressReference", "customDialog", "customForm", "customName", "customQuantity", "customUnit",
   "customNote", "openCustom", "emptyCustom", "cartCustom", "closeCustom", "cancelCustom", "confirmationDialog",
   "cancelConfirmation", "openWhatsApp", "finalOrderItems", "finalOrderCount", "finalAddProduct", "finalAddCustom",
+  "detailsDialog", "closeDetails", "backToCart",
 ].map((id) => [id, document.querySelector(`#${id}`)]));
 
 function normalize(value) {
@@ -547,6 +548,26 @@ function validateItems() {
   return cartItems().every((item) => Number(item.quantity) > 0 && String(item.unit).trim());
 }
 
+function openDeliveryDetails() {
+  if (!validateItems()) {
+    window.alert("Revisa que todos los productos tengan una cantidad y una unidad válidas.");
+    return;
+  }
+
+  elements.cartDialog.close();
+
+  if (!elements.detailsDialog.open) {
+    elements.detailsDialog.showModal();
+  }
+}
+
+function returnToCart() {
+  if (elements.detailsDialog.open) {
+    elements.detailsDialog.close();
+  }
+
+  openCart();
+}
 function requestConfirmation(event) {
   event.preventDefault();
   if (!elements.customerForm.reportValidity()) return;
@@ -554,7 +575,7 @@ function requestConfirmation(event) {
     window.alert("Revisa que todos los productos tengan una cantidad y una unidad válidas.");
     return;
   }
-  elements.cartDialog.close();
+  elements.detailsDialog.close();
   renderFinalOrder();
   elements.confirmationDialog.showModal();
 }
@@ -787,8 +808,14 @@ function initialize() {
     quantityRules(elements.customQuantity, elements.customUnit.value);
     elements.customQuantity.value = { PZ: "1", G: "500", KG: "1" }[elements.customUnit.value] || "1";
   });
+  elements.sendOrder.addEventListener("click", openDeliveryDetails);
+  elements.closeDetails.addEventListener("click", returnToCart);
+  elements.backToCart.addEventListener("click", returnToCart);
   elements.customerForm.addEventListener("submit", requestConfirmation);
-  elements.cancelConfirmation.addEventListener("click", () => { elements.confirmationDialog.close(); openCart(); });
+  elements.cancelConfirmation.addEventListener("click", () => {
+  elements.confirmationDialog.close();
+  elements.detailsDialog.showModal();
+});
   elements.finalAddProduct.addEventListener("click", () => {
     elements.confirmationDialog.close();
     document.querySelector("#catalogo").scrollIntoView({ behavior: "smooth", block: "start" });
@@ -797,11 +824,12 @@ function initialize() {
     openCustom("confirmation");
   });
   elements.openWhatsApp.addEventListener("click", openWhatsApp);
-  [elements.cartDialog, elements.productDialog, elements.customDialog, elements.confirmationDialog].forEach((dialog) => {
+  [elements.cartDialog, elements.productDialog, elements.customDialog, elements.detailsDialog, elements.confirmationDialog].forEach((dialog) => {
     dialog.addEventListener("click", (event) => {
       if (event.target !== dialog) return;
       if (dialog === elements.customDialog) closeCustom();
       else if (dialog === elements.productDialog) closeCatalogProduct();
+      else if (dialog === elements.detailsDialog) returnToCart();
       else dialog.close();
     });
   });
