@@ -694,7 +694,7 @@ function orderMessage() {
     "",
     `PAGO: ${upper(elements.paymentMethod.value)}`,
     "",
-    "ENTREGA: SÁBADO, A MÁS TARDAR 01:00 A. M.",
+    "ENTREGA: SÁBADO, A MÁS TARDAR 01:00 P. M.",
     "",
     "LISTA DE PRODUCTOS:",
     ...lines,
