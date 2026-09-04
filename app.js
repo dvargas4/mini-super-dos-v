@@ -50,7 +50,7 @@ const state = {
 const elements = Object.fromEntries([
   "categories", "productGrid", "emptyState", "searchInput", "cartCount", "cartDialog", "openCart", "closeCart",
   "cartEmpty", "cartContent", "cartItems", "cartProductCount", "cartEstimatedTotal", "cartPriceLabel", "cartPriceNote",
-  "sendOrder", "mobileSummary", "mobileCount", "catalogStatus",
+  "sendOrder", "mobileSummary", "mobileCount", "catalogStatus", "headerSearch",
   "deliveryZone", "paymentMethod", "customerForm", "customerName", "streetAddress", "neighborhood", "postalCode",
   "productDialog", "productForm", "productDialogEyebrow", "productDialogName", "productQuantity", "productUnit",
   "productDialogHelp", "productNote", "closeProduct", "cancelProduct", "saveProduct",
@@ -901,6 +901,14 @@ function initialize() {
     option.textContent = method;
     elements.paymentMethod.append(option);
   });
+  elements.headerSearch.addEventListener("click", () => {
+  elements.searchInput.focus({ preventScroll: true });
+
+  document.querySelector("#catalogo").scrollIntoView({
+    behavior: "smooth",
+    block: "start",
+  });
+});
   elements.searchInput.addEventListener("input", (event) => { state.query = event.target.value; renderProducts(); });
   elements.openCart.addEventListener("click", openCart);
   elements.mobileSummary.addEventListener("click", openCart);
