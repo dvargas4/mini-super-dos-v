@@ -952,25 +952,23 @@ function orderMessage() {
 
   return [
     `*${upper(elements.customerName.value)}*`,
-    "",
     upper(elements.streetAddress.value),
     `COLONIA: ${upper(elements.neighborhood.value)}`,
     `ALCALDÍA O MUNICIPIO: ${upper(elements.municipality.value)}`,
     `C.P.: ${upper(elements.postalCode.value)}`,
     `REFERENCIA: ${upper(elements.addressReference.value)}`,
     "",
-    `PAGO: ${upper(elements.paymentMethod.value)}`,
+    `PAGO: *${upper(elements.paymentMethod.value)}*`,
     "",
     "ENTREGA: SÁBADO, A MÁS TARDAR A LA 1:00 P. M.",
     "",
-    "LISTA DE PRODUCTOS:",
+    "*LISTA DE PRODUCTOS:*",
+    "",
     ...productLines,
     "",
     totalLine,
     "",
-    "EL TOTAL FINAL SE CONFIRMA DESPUÉS DEL PESAJE.",
-    "",
-    "SOLICITO CONFIRMACIÓN DE DISPONIBILIDAD, TOTAL Y ENTREGA. GRACIAS.",
+    "SOLICITO CONFIRMACIÓN DE RECIBIDO, GRACIAS.",
   ].join("\n");
 }
 
