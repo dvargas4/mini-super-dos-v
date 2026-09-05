@@ -152,7 +152,7 @@ function quantityRules(input, unit) {
   const rules = {
     PZ: { min: "1", step: "1" },
     G: { min: "1", step: "1" },
-    KG: { min: "0.1", step: "0.1" },
+    KG: { min: "0.01", step: "any" },
   }[normalizedUnit] || { min: "0.1", step: "0.1" };
   input.min = rules.min;
   input.step = rules.step;
@@ -264,6 +264,7 @@ function saveCatalogProduct(event) {
     price: product.price,
     priceUnit: product.priceUnit,
     allowedUnits: product.allowedUnits,
+    approxPieceWeight: product.approxPieceWeight,
     custom: false,
   };
   saveCart();
@@ -282,8 +283,10 @@ function removeItem(id) {
 
 function updateItem(id, field, value) {
   if (!state.cart[id]) return;
+
   state.cart[id][field] = value;
   saveCart();
+  updateCartApproximation();
 }
 
 function makeField(labelText, input) {
@@ -488,6 +491,200 @@ function convertedPriceByUnit(value, unit) {
     maximumFractionDigits: 2,
   }).format(convertedPrice);
 }
+function numberFromPrice(value) {
+  let text = String(value || "")
+    .trim()
+    .replace(/[^\d,.-]/g, "");
+
+  if (!text) return null;
+
+  if (text.includes(",") && text.includes(".")) {
+    if (text.lastIndexOf(",") > text.lastIndexOf(".")) {
+      text = text.replace(/\./g, "").replace(",", ".");
+    } else {
+      text = text.replace(/,/g, "");
+    }
+  } else {
+    text = text.replace(",", ".");
+  }
+
+  const number = Number(text);
+  return Number.isFinite(number) ? number : null;
+}
+
+function formatMoney(value) {
+  return new Intl.NumberFormat("es-MX", {
+    style: "currency",
+    currency: "MXN",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(value);
+}
+
+function pricePerKilogram(item) {
+  const displayedPrice = numberFromPrice(item.price);
+  if (displayedPrice === null) return null;
+
+  const basis = normalize(item.priceUnit).replace(/\s+/g, "");
+
+  if (["kg", "1kg", "kilo", "kilogramo", "kilogramos"].includes(basis)) {
+    return displayedPrice;
+  }
+
+  if (["½kg", "1/2kg", "mediokilogramo"].includes(basis)) {
+    return displayedPrice / 0.5;
+  }
+
+  const gramsMatch = basis.match(
+    /^(\d+(?:[.,]\d+)?)(?:g|gramo|gramos)$/
+  );
+
+  if (gramsMatch) {
+    const grams = Number(gramsMatch[1].replace(",", "."));
+
+    if (grams > 0) {
+      return displayedPrice / (grams / 1000);
+    }
+  }
+
+  return null;
+}
+
+function approximateItemSubtotal(item) {
+  const quantity = Number(item.quantity);
+  const displayedPrice = numberFromPrice(item.price);
+  const selectedUnit = String(item.unit || "").toUpperCase();
+  const priceBasis = normalize(item.priceUnit).replace(/\s+/g, "");
+
+  if (!Number.isFinite(quantity) || quantity <= 0) {
+    return { amount: null, type: "invalid" };
+  }
+
+  if (displayedPrice === null) {
+    return { amount: null, type: "missing-price" };
+  }
+
+  const pricePerKg = pricePerKilogram(item);
+
+  if (selectedUnit === "G" && pricePerKg !== null) {
+    return {
+      amount: pricePerKg * (quantity / 1000),
+      type: "calculated",
+    };
+  }
+
+  if (selectedUnit === "KG" && pricePerKg !== null) {
+    return {
+      amount: pricePerKg * quantity,
+      type: "calculated",
+    };
+  }
+
+  if (selectedUnit === "PZ") {
+    const directUnits = [
+      "pz",
+      "pieza",
+      "piezas",
+      "caja",
+      "cajas",
+      "paquete",
+      "paquetes",
+    ];
+
+    if (directUnits.includes(priceBasis)) {
+      return {
+        amount: displayedPrice * quantity,
+        type: "calculated",
+      };
+    }
+
+    if (pricePerKg !== null) {
+      const approximateGrams = Number(item.approxPieceWeight);
+
+      if (Number.isFinite(approximateGrams) && approximateGrams > 0) {
+        return {
+          amount: pricePerKg * (approximateGrams / 1000) * quantity,
+          type: "estimated-weight",
+          pricePerKg,
+        };
+      }
+
+      return {
+        amount: null,
+        type: "needs-weighing",
+        pricePerKg,
+      };
+    }
+  }
+
+  return { amount: null, type: "missing-price" };
+}
+
+function cartApproximation() {
+  return cartItems().reduce(
+    (result, item) => {
+      const subtotal = approximateItemSubtotal(item);
+
+      if (subtotal.amount !== null) {
+        result.amount += subtotal.amount;
+      }
+
+      if (subtotal.type === "needs-weighing") {
+        result.needsWeighing += 1;
+      }
+
+      if (["missing-price", "invalid"].includes(subtotal.type)) {
+        result.pendingPrice += 1;
+      }
+
+      return result;
+    },
+    {
+      amount: 0,
+      needsWeighing: 0,
+      pendingPrice: 0,
+    }
+  );
+}
+
+function updateCartApproximation() {
+  const result = cartApproximation();
+  const hasCalculatedAmount = result.amount > 0;
+
+  elements.cartPriceLabel.textContent = "Subtotal aproximado";
+
+  if (hasCalculatedAmount) {
+    elements.cartEstimatedTotal.textContent =
+      formatMoney(result.amount) +
+      (result.needsWeighing > 0 ? " + pesaje" : "");
+  } else if (result.needsWeighing > 0) {
+    elements.cartEstimatedTotal.textContent = "Falta pesaje";
+  } else {
+    elements.cartEstimatedTotal.textContent = "Por confirmar";
+  }
+
+  const notes = [];
+
+  if (result.needsWeighing > 0) {
+    notes.push(
+      `${result.needsWeighing} ${
+        result.needsWeighing === 1 ? "producto requiere" : "productos requieren"
+      } pesaje.`
+    );
+  }
+
+  if (result.pendingPrice > 0) {
+    notes.push(
+      `${result.pendingPrice} ${
+        result.pendingPrice === 1 ? "producto tiene" : "productos tienen"
+      } precio por confirmar.`
+    );
+  }
+
+  notes.push("EL TOTAL FINAL SE CONFIRMA DESPUÉS DEL PESAJE.");
+
+  elements.cartPriceNote.textContent = notes.join(" ");
+}
 function renderProducts() {
   const query = normalize(state.query);
   const visible = products.filter((product) => {
@@ -547,9 +744,7 @@ function renderCart() {
   elements.cartContent.hidden = count === 0;
   elements.sendOrder.disabled = count === 0;
   elements.cartItems.replaceChildren(...items.map(makeCartItem));
-  elements.cartPriceLabel.textContent = "Total del pedido";
-  elements.cartEstimatedTotal.textContent = "Por confirmar";
-  elements.cartPriceNote.textContent = "La tienda confirma disponibilidad, peso real por pieza y total final vía WhatsApp.";
+  updateCartApproximation();
 }
 
 function renderFinalOrder() {
@@ -678,11 +873,52 @@ function requestConfirmation(event) {
 }
 
 function orderMessage() {
-  const upper = (value) => String(value || "").trim().toLocaleUpperCase("es-MX");
-  const lines = cartItems().map((item) => {
+  const upper = (value) =>
+    String(value || "").trim().toLocaleUpperCase("es-MX");
+
+  const productLines = cartItems().flatMap((item) => {
     const note = upper(item.note);
-    return `${item.quantity} ${upper(item.unit)} DE ${upper(item.name)}${note ? ` (${note})` : ""}`;
+    const subtotal = approximateItemSubtotal(item);
+
+    const mainLine =
+      `${item.quantity} ${upper(unitName(item.unit, item.quantity))} DE ` +
+      `${upper(item.name)}${note ? ` (${note})` : ""}`;
+
+    if (subtotal.amount !== null) {
+      return [
+        mainLine,
+        `SUBTOTAL APROXIMADO: ${formatMoney(subtotal.amount)}`,
+      ];
+    }
+
+    if (subtotal.type === "needs-weighing") {
+      return [
+        mainLine,
+        `PRECIO: ${formatMoney(subtotal.pricePerKg)} POR KILOGRAMO`,
+        "FALTA PESAJE PARA CALCULAR EL SUBTOTAL",
+      ];
+    }
+
+    return [
+      mainLine,
+      "SUBTOTAL: POR CONFIRMAR",
+    ];
   });
+
+  const total = cartApproximation();
+
+  let totalLine = "SUBTOTAL APROXIMADO: POR CONFIRMAR";
+
+  if (total.amount > 0) {
+    totalLine = `SUBTOTAL APROXIMADO: ${formatMoney(total.amount)}`;
+
+    if (total.needsWeighing > 0) {
+      totalLine += " + PRODUCTOS PENDIENTES DE PESAJE";
+    }
+  } else if (total.needsWeighing > 0) {
+    totalLine = "SUBTOTAL APROXIMADO: FALTA PESAJE";
+  }
+
   return [
     `*${upper(elements.customerName.value)}*`,
     "",
@@ -694,10 +930,14 @@ function orderMessage() {
     "",
     `PAGO: ${upper(elements.paymentMethod.value)}`,
     "",
-    "ENTREGA: SÁBADO, A MÁS TARDAR 01:00 P. M.",
+    "ENTREGA: SÁBADO, A MÁS TARDAR A LA 1:00 P. M.",
     "",
     "LISTA DE PRODUCTOS:",
-    ...lines,
+    ...productLines,
+    "",
+    totalLine,
+    "",
+    "EL TOTAL FINAL SE CONFIRMA DESPUÉS DEL PESAJE.",
     "",
     "SOLICITO CONFIRMACIÓN DE DISPONIBILIDAD, TOTAL Y ENTREGA. GRACIAS.",
   ].join("\n");
@@ -771,9 +1011,10 @@ function sheetColumnMap(headerRow) {
     price: find(["precio de venta"], 7),
     photo: find(["url de foto", "url foto", "foto de producto"], 8),
     saleUnit: 9,
-    priceDisplayUnit: 12,
+    approxPieceWeight: 14,
     category: 10,
     active: 11,
+    priceDisplayUnit: 12,
   };
 }
 
@@ -789,6 +1030,8 @@ function productFromSheet(row, localByName, columns) {
   const normalizedName = normalize(name);
   const local = localByName.get(normalizedName) || localByName.get(sheetNameAliases[normalizedName]);
   const rawSheetPrice = sheetCell(row, columns.price);
+  const approxPieceWeight =
+  numberFromPrice(sheetCell(row, columns.approxPieceWeight)) || 0;
   const sheetPhoto = validHttpsUrl(sheetCell(row, columns.photo));
   const sheetCategory = String(sheetCell(row, columns.category) || "").trim();
   const allowedUnits = allowedUnitsFromSheet(
@@ -817,9 +1060,10 @@ const price = sheetPrice || local?.price || "";
     category: sheetCategory || local?.category || "Otros",
     defaultUnit,
     allowedUnits,
+    approxPieceWeight,
     price,
-    priceUnit: priceDisplayUnit || (
-  sheetPrice
+    priceUnit: priceDisplayUnit || (sheetPrice ? "kg" : local?.priceUnit || ""),
+    sheetPrice
     ? "kilogramo"
     : priceUnitName(local?.priceUnit || "")
 ),
@@ -845,6 +1089,7 @@ function reconcileCart() {
       price: product.price,
       priceUnit: product.priceUnit,
       allowedUnits: product.allowedUnits,
+      approxPieceWeight: product.approxPieceWeight,
     });
     if (!product.allowedUnits.includes(String(item.unit).toUpperCase())) item.unit = product.defaultUnit;
   });
