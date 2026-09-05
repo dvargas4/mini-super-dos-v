@@ -661,3 +661,19 @@ textarea {
     line-height: 1.5;
   }
 }
+.whatsapp-order-preview {
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 20px;
+  border: 2px solid #d7deea;
+  border-radius: 18px;
+  background: #ffffff;
+  color: #102044;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
