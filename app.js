@@ -749,14 +749,45 @@ function renderCart() {
 
 function renderFinalOrder() {
   const items = cartItems();
-  elements.finalOrderCount.textContent = `${items.length} ${items.length === 1 ? "producto" : "productos"}`;
-  elements.finalOrderItems.replaceChildren(...items.map(makeCartItem));
+
+  elements.finalOrderCount.textContent =
+    `${items.length} ${items.length === 1 ? "producto" : "productos"}`;
+
+  elements.finalOrderItems.replaceChildren();
+
   if (!items.length) {
     const empty = createNode("div", "final-order-empty");
-    empty.append(createNode("strong", "", "Tu lista quedó vacía"), createNode("span", "", "Agrega al menos un producto antes de abrir WhatsApp."));
+
+    empty.append(
+      createNode("strong", "", "Tu lista quedó vacía"),
+      createNode(
+        "span",
+        "",
+        "Agrega al menos un producto antes de abrir WhatsApp."
+      )
+    );
+
     elements.finalOrderItems.append(empty);
+    elements.openWhatsApp.disabled = true;
+    return;
   }
-  elements.openWhatsApp.disabled = items.length === 0;
+
+  const preview = createNode("div", "whatsapp-preview");
+
+  preview.append(
+    createNode(
+      "strong",
+      "whatsapp-preview-title",
+      "Así se enviará tu pedido:"
+    )
+  );
+
+  const message = createNode("pre", "whatsapp-message");
+  message.textContent = orderMessage();
+
+  preview.append(message);
+  elements.finalOrderItems.append(preview);
+  elements.openWhatsApp.disabled = false;
 }
 
 function openCart() {
