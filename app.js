@@ -1062,11 +1062,11 @@ const price = sheetPrice || local?.price || "";
     allowedUnits,
     approxPieceWeight,
     price,
-    priceUnit: priceDisplayUnit || (sheetPrice ? "kg" : local?.priceUnit || ""),
-    sheetPrice
-    ? "kilogramo"
-    : priceUnitName(local?.priceUnit || "")
-),
+    priceUnit: priceDisplayUnit || (
+      sheetPrice
+        ? "kilogramo"
+        : priceUnitName(local?.priceUnit || "")
+    ),
     photoUrl: sheetPhoto,
     photoCredit: sheetPhoto ? "Imagen proporcionada por la tienda" : "",
     photoSource: "",
