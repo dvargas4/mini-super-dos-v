@@ -611,3 +611,53 @@ textarea {
     line-height: 1.4;
   }
 }
+.whatsapp-preview {
+  width: 100%;
+  padding: 20px;
+  border: 2px solid #d5deec;
+  border-radius: 20px;
+  background: #efeae2;
+  box-sizing: border-box;
+}
+
+.whatsapp-preview-title {
+  display: block;
+  margin-bottom: 14px;
+  color: #0b2e68;
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.whatsapp-message {
+  width: 100%;
+  margin: 0;
+  padding: 18px;
+  border-radius: 16px 16px 4px 16px;
+  background: #d9fdd3;
+  color: #162238;
+  font-family: Arial, sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  box-sizing: border-box;
+  box-shadow: 0 4px 14px rgb(0 0 0 / 8%);
+}
+
+@media (max-width: 720px) {
+  .whatsapp-preview {
+    padding: 12px;
+    border-radius: 16px;
+  }
+
+  .whatsapp-preview-title {
+    font-size: 16px;
+  }
+
+  .whatsapp-message {
+    padding: 15px;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+}
