@@ -897,48 +897,14 @@ function orderMessage() {
   const upper = (value) =>
     String(value || "").trim().toLocaleUpperCase("es-MX");
 
-  const productLines = cartItems().flatMap((item) => {
+  const productLines = cartItems().map((item) => {
     const note = upper(item.note);
-    const subtotal = approximateItemSubtotal(item);
 
-    const mainLine =
+    return (
       `${item.quantity} ${upper(unitName(item.unit, item.quantity))} DE ` +
-      `${upper(item.name)}${note ? ` (${note})` : ""}`;
-
-    if (subtotal.amount !== null) {
-      return [
-        mainLine,
-        `SUBTOTAL APROXIMADO: ${formatMoney(subtotal.amount)}`,
-      ];
-    }
-
-    if (subtotal.type === "needs-weighing") {
-      return [
-        mainLine,
-        `PRECIO: ${formatMoney(subtotal.pricePerKg)} POR KILOGRAMO`,
-        "FALTA PESAJE PARA CALCULAR EL SUBTOTAL",
-      ];
-    }
-
-    return [
-      mainLine,
-      "SUBTOTAL: POR CONFIRMAR",
-    ];
+      `${upper(item.name)}${note ? ` (${note})` : ""}`
+    );
   });
-
-  const total = cartApproximation();
-
-  let totalLine = "SUBTOTAL APROXIMADO: POR CONFIRMAR";
-
-  if (total.amount > 0) {
-    totalLine = `SUBTOTAL APROXIMADO: ${formatMoney(total.amount)}`;
-
-    if (total.needsWeighing > 0) {
-      totalLine += " + PRODUCTOS PENDIENTES DE PESAJE";
-    }
-  } else if (total.needsWeighing > 0) {
-    totalLine = "SUBTOTAL APROXIMADO: FALTA PESAJE";
-  }
 
   return [
     `*${upper(elements.customerName.value)}*`,
@@ -950,15 +916,11 @@ function orderMessage() {
     "",
     `PAGO: *${upper(elements.paymentMethod.value)}*`,
     "",
-    "ENTREGA: SÁBADO, A MÁS TARDAR A LA 1:00 P. M.",
-    "",
     "*LISTA DE PRODUCTOS:*",
     "",
     ...productLines,
     "",
-    totalLine,
-    "",
-    "SOLICITO CONFIRMACIÓN DE RECIBIDO, GRACIAS.",
+    "*SOLICITO CONFIRMACIÓN DE RECIBIDO.*",
   ].join("\n");
 }
 
