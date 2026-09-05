@@ -772,20 +772,10 @@ function renderFinalOrder() {
     return;
   }
 
-  const preview = createNode("div", "whatsapp-preview");
+  const preview = document.createElement("pre");
+  preview.className = "whatsapp-order-preview";
+  preview.textContent = orderMessage();
 
-  preview.append(
-    createNode(
-      "strong",
-      "whatsapp-preview-title",
-      "Así se enviará tu pedido:"
-    )
-  );
-
-  const message = createNode("pre", "whatsapp-message");
-  message.textContent = orderMessage();
-
-  preview.append(message);
   elements.finalOrderItems.append(preview);
   elements.openWhatsApp.disabled = false;
 }
