@@ -681,7 +681,7 @@ function updateCartApproximation() {
     );
   }
 
-  notes.push("EL TOTAL FINAL SE CONFIRMA DESPUÉS DEL PESAJE.");
+  notes.push("\nEL TOTAL FINAL SE CONFIRMA DESPUÉS DEL PESAJE.");
 
   elements.cartPriceNote.textContent = notes.join(" ");
 }
